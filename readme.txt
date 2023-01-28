@@ -41,18 +41,7 @@ DISCLAIMER:
 INSTALLING, DISTRIBUTING AND/OR USING THIS SOFTWARE IMPLIES THAT YOU HAVE
    READ THIS LICENSE AND UNDERSTAND AND AGREE ITS TERMS AND CONDITIONS.
 
-   Usage:
-   You can use this software freely with non-profit purposes only.
-
-   Distribution:
-   If you plan to distribute this package you must not charge for it except
-   for the physical storage medium used to distribute it if any.
-   If you have paid for this package for other reason other than this one,
-   please contact your distributor in order to demand the fulfillment of this
-   condition.
-   However, an additional clause applies to distribution; files and directory
-   structure of the package must be kept. Adding, deleting or otherwise modifying
-   files and/or directories of the package violates this statement.
+ See: license.txt
 
  WARRANTY:
     This program is provided WITHOUT ANY KIND OF WARRANTY. Damnsoft development team

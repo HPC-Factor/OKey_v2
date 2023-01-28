@@ -16,7 +16,7 @@
 #define TRAY_NOTIFYICON WM_USER + 2001
 #define ID_TRAY	5000
 
-//#define DEBUG_ENABLE
+#define DEBUG_ENABLE
 
 /* === Function Prototypes ==================================================== */
 BOOL WINAPI MainDlgProc( HWND, UINT, WPARAM, LPARAM );
@@ -474,12 +474,12 @@ LRESULT CALLBACK LLKeyHookCallback(int nCode, WPARAM wParam, LPARAM lParam){
 	}
 
 	/* Hardware Key Codes ****************************************/
-	if (vkCode > 0xc0 && vkCode < 0xd0 && _WIN_){
-		/* Trow windows key */
-		key_press(0,0,0);
-		key_press(VK_LWIN,0,KEYEVENTF_KEYUP);
-		key_press(0,0,KEYEVENTF_KEYUP);
-	}
+//	if (vkCode > 0xc0 && vkCode < 0xd0 && _WIN_){
+		//* Trow windows key */
+//		key_press(0,0,0);
+		//key_press(VK_LWIN,0,KEYEVENTF_KEYUP);
+		//key_press(0,0,KEYEVENTF_KEYUP);
+	//}
 
 	#ifdef DEBUG_ENABLE
 	fprintf(debugFh, "CB[%d]\tNEW_EVENT\tA%dW%dC%dS%dP%d\n",vkCode, _ALT_, _WIN_,

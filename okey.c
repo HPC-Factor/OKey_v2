@@ -382,6 +382,8 @@ int search_kcombo(BYTE vk, BOOL alt,BOOL win, BOOL ctrl, BOOL shift){
 /** check_release_modifiers: update Special keys status.                       **/
 /********************************************************************************/
 void check_release_modifiers(UINT vk, WORD flag){
+	/* Caps Lock */
+	if (vk == 20 && flag!=0) _CAPS_ = !_CAPS_;
 	switch (vk){
 		case VK_MENU:
 			_ALT_ = !(flag!=0);
@@ -425,7 +427,6 @@ LRESULT CALLBACK LLKeyHookCallback(int nCode, WPARAM wParam, LPARAM lParam){
 	UINT unicode;
 	BOOL unpress;
 	int combination;
-	
 
 	vkCode = (BYTE)vk_info->vkCode;
 	if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) {
@@ -473,23 +474,15 @@ LRESULT CALLBACK LLKeyHookCallback(int nCode, WPARAM wParam, LPARAM lParam){
 		}
 	}
 
-	/* Hardware Key Codes ****************************************/
-	if (vkCode > 0xc0 && vkCode < 0xd0 && _WIN_){
-		/* Trow windows key */
-		key_press(0,0,0);
-		key_press(VK_LWIN,0,KEYEVENTF_KEYUP);
-		key_press(0,0,KEYEVENTF_KEYUP);
-	}
-
 	#ifdef DEBUG_ENABLE
 	fprintf(debugFh, "CB[%d]\tNEW_EVENT\tA%dW%dC%dS%dP%d\n",vkCode, _ALT_, _WIN_,
 			_CTRL_,_SHIFT_, _CAPS_);
 	#endif
-	/* No? then map the event */
-	check_release_modifiers(vkCode, flag);
-	/* Caps Lock */
-	if (vkCode == 20 && flag!=0) _CAPS_ = !_CAPS_;
 
+	/* Update key modifiers */
+	check_release_modifiers(vkCode, flag);
+	
+	/* Do we have a Unicode combination registered with the currently pressed keys? */
 	combination = search_kcombo(vkCode, _ALT_,_WIN_,_CTRL_,(_SHIFT_ ^ _CAPS_));
 	if (combination != -1 && flag == 0){
 		unicode = Combinations[combination].unicode;
@@ -505,7 +498,20 @@ LRESULT CALLBACK LLKeyHookCallback(int nCode, WPARAM wParam, LPARAM lParam){
 		/* Press them again ****************************/
 		press_held_keys(Combinations[combination].vMod, TRUE);
 	}else{
-		key_press(Map[vkCode], 0, flag);
+		/* Only engage in the whole key simulation if there's an actual mapping
+		   defined for the key. Otherwise let the OS handle the event. We already
+		   updated all of our internal modifiers anyway */
+		if (Map[vkCode] == vkCode) {
+			return CallNextHookEx(g_hInstalledLLKBDhook, nCode, wParam, lParam);
+		} else {
+			/* The very special case of hardware Key Codes *********************/
+			if (vkCode > 0xc0 && vkCode < 0xd0 && _WIN_){
+				key_press(0,0,0);
+				key_press(VK_LWIN,0,KEYEVENTF_KEYUP);
+				key_press(0,0,KEYEVENTF_KEYUP);
+			}
+			key_press(Map[vkCode], 0, flag);
+		}
 	}
 	return -1;
 }
